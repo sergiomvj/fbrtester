@@ -1,0 +1,50 @@
+
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+# Install libc6-compat
+RUN apk add --no-cache libc6-compat
+
+# Copy dashboard package files (from root context)
+COPY dashboard/package.json dashboard/package-lock.json* ./
+
+# Install dependencies
+RUN npm install --production=false
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Copy modules and source
+COPY --from=deps /app/node_modules ./node_modules
+COPY dashboard/ .
+
+# Env vars
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build (Runs next build inside /app since we moved dashboard content to root of container)
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+RUN apk add --no-cache libc6-compat
+
+COPY --from=builder /app/public ./public
+
+# Copy standalone build
+# Since we built in /app (root of builder), the standalone output is at /app/.next/standalone
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+
+USER node
+
+EXPOSE 3000
+
+# server.js is at root of standalone because we built from /app
+CMD ["node", "server.js"]
