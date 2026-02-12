@@ -1,0 +1,23 @@
+[
+  {
+    "url": "https://example.com",
+    "status": 200,
+    "links": [],
+    "externalLinks": [
+      "https://iana.org/domains/example"
+    ],
+    "brokenLinks": [],
+    "assets": [],
+    "interactables": [
+      {
+        "selector": "a",
+        "type": "link",
+        "text": "Learn more",
+        "isVisible": true,
+        "isEnabled": true,
+        "issues": []
+      }
+    ],
+    "accessibility": []
+  }
+]
