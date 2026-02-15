@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Shield, Zap, BookOpen, Play, Loader2, Sparkles, Users, ArrowRight } from 'lucide-react';
+import { Search, Shield, Zap, BookOpen, Play, Loader2, Sparkles, Users, ArrowRight, Activity, Terminal } from 'lucide-react';
 import clsx from 'clsx';
 import { ResultsView } from '@/components/ResultsView';
 
@@ -24,47 +24,62 @@ const agents: AgentProfile[] = [
   {
     id: 'lurdinha',
     name: 'Lurdinha',
-    role: 'A Fofoqueira',
-    desc: 'Links & Navegação',
+    role: 'Navegação',
+    desc: 'Deep Link Crawler',
     icon: <Search className="w-6 h-6 text-white" />,
     color: 'text-pink-400',
-    bgGradient: 'from-pink-500 to-rose-500',
-    specialty: 'Links',
+    bgGradient: 'from-pink-500/20 to-rose-500/20',
+    specialty: 'Links & 404s',
   },
   {
     id: 'tereza',
     name: 'Tereza',
-    role: 'A Tia da Limpeza',
-    desc: 'Linting & Boas Práticas',
+    role: 'Qualidade',
+    desc: 'Static Analysis',
     icon: <Zap className="w-6 h-6 text-white" />,
-    color: 'text-yellow-400',
-    bgGradient: 'from-amber-500 to-yellow-500',
-    specialty: 'Quality',
+    color: 'text-amber-400',
+    bgGradient: 'from-amber-500/20 to-yellow-500/20',
+    specialty: 'Linting',
   },
   {
     id: 'judith',
     name: 'Judith',
-    role: 'A Advogada',
-    desc: 'Specs & Conformidade',
+    role: 'Conformidade',
+    desc: 'Spec Verifier',
     icon: <BookOpen className="w-6 h-6 text-white" />,
     color: 'text-blue-400',
-    bgGradient: 'from-blue-600 to-indigo-600',
-    specialty: 'Specs',
+    bgGradient: 'from-blue-600/20 to-indigo-600/20',
+    specialty: 'Requirements',
   },
   {
     id: 'rosangela',
     name: 'Rosângela',
-    role: 'A Segurança',
-    desc: 'Segurança & HTTPS',
+    role: 'Segurança',
+    desc: 'Security Audit',
     icon: <Shield className="w-6 h-6 text-white" />,
     color: 'text-red-400',
-    bgGradient: 'from-red-600 to-orange-600',
-    specialty: 'Security',
+    bgGradient: 'from-red-600/20 to-orange-600/20',
+    specialty: 'Headers & SSL',
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
+
 export default function LandingPage() {
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null); // 'squad' or agentId
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState<any>(null);
@@ -75,21 +90,17 @@ export default function LandingPage() {
     setReportData(null);
 
     try {
-      // Mock API call
       await fetch('/api/scan', {
         method: 'POST',
         body: JSON.stringify({ url, agent: selectedAgent })
       });
 
-      // Fast-forward to result (mock)
-      // Wait a bit for the agent to potentially start/write (in real scenario, we might poll)
-      // For now, we assume immediate availability for the demo flow or just try fetching
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulating delay for effect
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       const res = await fetch('/api/report');
       if (res.ok) {
         const data = await res.json();
-        // Inject mock url if needed
         setReportData({ ...data, url: url.startsWith('http') ? url : `https://${url}` });
       }
     } catch (e) {
@@ -100,143 +111,166 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 text-white font-sans overflow-x-hidden selection:bg-purple-500/30">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen text-white font-sans selection:bg-indigo-500/30">
 
-        {/* Header / Intro */}
-        {!reportData && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16 space-y-4 pt-10"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Nova Análise</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-indigo-100 to-indigo-400">
-                Quem vai testar hoje?
-              </span>
-            </h1>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Selecione um especialista ou chame o squad completo para uma varredura total.
-            </p>
-          </motion.div>
-        )}
+      {/* Background Gradients */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] animate-pulse-slow" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '1s' }} />
+      </div>
 
-        {/* Selection Grid */}
-        <AnimatePresence>
-          {!reportData && (
+      <div className="max-w-7xl mx-auto px-6 py-12">
+
+        <AnimatePresence mode="wait">
+          {!reportData ? (
             <motion.div
-              exit={{ opacity: 0, y: -20, height: 0 }}
-              className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-12"
+              key="selector"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-12"
             >
-              {/* Squad Option */}
-              <div
-                onClick={() => setSelectedAgent('squad')}
-                className={clsx(
-                  "col-span-1 md:col-span-5 lg:col-span-1 p-6 rounded-3xl border cursor-pointer transition-all duration-300 relative overflow-hidden group hover:shadow-2xl hover:shadow-indigo-500/20",
-                  selectedAgent === 'squad'
-                    ? "bg-indigo-600 border-indigo-400 ring-4 ring-indigo-500/20"
-                    : "bg-gradient-to-br from-slate-900 to-slate-800 border-white/10 hover:border-white/20"
-                )}
-              >
-                <div className="absolute inset-0 bg-noise opacity-10" />
-                <div className="relative z-10 flex flex-col items-center justify-center h-full text-center gap-3">
-                  <div className="p-3 bg-white/10 rounded-xl mb-1">
-                    <Users className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-white leading-tight">Squad<br />Completo</h3>
-                  </div>
+              {/* Header */}
+              <motion.div variants={itemVariants} className="text-center space-y-6 pt-10">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium backdrop-blur-sm">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>8Tester Intelligence Suite</span>
                 </div>
-                {selectedAgent === 'squad' && (
-                  <motion.div layoutId="check" className="absolute top-3 right-3 text-white"><CheckCircleIcon /></motion.div>
-                )}
-              </div>
+                <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-tight">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-indigo-50 to-indigo-300">
+                    Command Center
+                  </span>
+                </h1>
+                <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                  Selecione um módulo de análise ou ative o squad completo.
+                </p>
+              </motion.div>
 
-              {/* Individual Agents */}
-              {agents.map((agent) => (
-                <div
-                  key={agent.id}
-                  onClick={() => setSelectedAgent(agent.id)}
+              {/* Bento Grid Selection */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+
+                {/* Squad Banner (Large) */}
+                <motion.button
+                  variants={itemVariants}
+                  onClick={() => setSelectedAgent('squad')}
                   className={clsx(
-                    "p-6 rounded-3xl border cursor-pointer transition-all duration-300 relative overflow-hidden group",
-                    selectedAgent === agent.id
-                      ? "bg-slate-800 border-white ring-2 ring-white/20 scale-[1.02]"
-                      : "bg-slate-900/50 border-white/5 hover:bg-slate-800 hover:border-white/10"
+                    "md:col-span-4 p-8 rounded-3xl text-left relative overflow-hidden group transition-all duration-300",
+                    selectedAgent === 'squad'
+                      ? "ring-2 ring-indigo-400 shadow-[0_0_50px_-10px_rgba(99,102,241,0.3)] bg-gradient-to-r from-indigo-900/40 to-purple-900/40"
+                      : "glass-card hover:bg-white/5"
                   )}
                 >
-                  <div className={clsx("absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity bg-gradient-to-br", agent.bgGradient)} />
-                  <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-                    <div className={clsx("w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br shadow-inner", agent.bgGradient)}>
-                      {agent.icon}
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-6">
+                      <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                        <Users className="w-8 h-8 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-1">Squad Completo</h3>
+                        <p className="text-slate-400">Varredura simultânea de Navegação, Segurança e Qualidade.</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-white text-lg">{agent.name}</h3>
-                      <p className="text-xs text-slate-400 font-medium uppercase mt-1 tracking-wide">{agent.specialty}</p>
+                    <div className={clsx("w-8 h-8 rounded-full border border-white/20 flex items-center justify-center transition-colors", selectedAgent === 'squad' ? "bg-indigo-500 border-indigo-500" : "")}>
+                      {selectedAgent === 'squad' && <div className="w-3 h-3 bg-white rounded-full" />}
                     </div>
                   </div>
-                  {selectedAgent === agent.id && (
-                    <motion.div layoutId="check" className="absolute top-3 right-3 text-white"><CheckCircleIcon /></motion.div>
-                  )}
-                </div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+                </motion.button>
 
-        {/* Input & Action */}
-        <AnimatePresence>
-          {!reportData && (
-            <motion.div
-              exit={{ opacity: 0, y: 20 }}
-              className="max-w-2xl mx-auto bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-2 flex flex-col md:flex-row gap-2 shadow-2xl shadow-black/50 ring-1 ring-white/5"
-            >
-              <div className="relative flex-1">
-                <input
-                  type="url"
-                  placeholder="https://seudominio.com.br"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  className="w-full h-14 pl-6 pr-4 bg-transparent text-white placeholder:text-slate-600 focus:outline-none rounded-xl hover:bg-white/5 transition-colors text-lg"
-                />
+                {/* Individual Agents (Small) */}
+                {agents.map((agent) => (
+                  <motion.button
+                    key={agent.id}
+                    variants={itemVariants}
+                    onClick={() => setSelectedAgent(agent.id)}
+                    className={clsx(
+                      "p-6 rounded-3xl text-left relative overflow-hidden group transition-all duration-300 h-full flex flex-col justify-between gap-4",
+                      selectedAgent === agent.id
+                        ? "ring-2 ring-indigo-400 shadow-[0_0_30px_-5px_rgba(99,102,241,0.2)] bg-gradient-to-br from-slate-800 to-slate-900"
+                        : "glass-card hover:bg-white/5"
+                    )}
+                  >
+                    <div className={clsx("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br -z-10", agent.bgGradient)} />
+                    <div className="flex justify-between items-start">
+                      <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center bg-black/20 backdrop-blur-md shadow-inner text-white", agent.color)}>
+                        {agent.icon}
+                      </div>
+                      <div className={clsx("w-5 h-5 rounded-full border border-white/20 flex items-center justify-center transition-colors", selectedAgent === agent.id ? "bg-indigo-500 border-indigo-500" : "")}>
+                        {selectedAgent === agent.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white mb-1">{agent.name}</h4>
+                      <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">{agent.role}</p>
+                    </div>
+                  </motion.button>
+                ))}
               </div>
-              <button
-                onClick={handleScan}
-                disabled={!selectedAgent || !url || loading}
-                className="h-14 px-8 bg-white text-slate-950 font-bold rounded-xl transition-all flex items-center justify-center gap-3 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px]"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Analisando...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Iniciar</span>
-                    <ArrowRight className="w-5 h-5" />
-                  </>
-                )}
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
-        {/* Results View */}
-        <AnimatePresence>
-          {reportData && (
+              {/* Input Area */}
+              <motion.div variants={itemVariants} className="max-w-2xl mx-auto">
+                <div className={clsx(
+                  "glass-panel rounded-2xl p-2 flex flex-col md:flex-row gap-2 transition-all duration-300",
+                  url ? "shadow-[0_0_40px_-10px_rgba(99,102,241,0.2)] border-indigo-500/30" : ""
+                )}>
+                  <div className="relative flex-1">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+                      <Terminal className="w-5 h-5" />
+                    </div>
+                    <input
+                      type="url"
+                      placeholder="https://"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="w-full h-14 pl-12 pr-4 bg-transparent text-white placeholder:text-slate-600 focus:outline-none rounded-xl text-lg font-mono"
+                    />
+                  </div>
+                  <button
+                    onClick={handleScan}
+                    disabled={!selectedAgent || !url || loading}
+                    className={clsx(
+                      "h-14 px-8 font-bold rounded-xl transition-all flex items-center justify-center gap-3 min-w-[160px]",
+                      !selectedAgent || !url || loading
+                        ? "bg-slate-800 text-slate-500 cursor-not-allowed"
+                        : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20"
+                    )}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Iniciar</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+                {/* Hints */}
+                <div className="mt-4 flex justify-center gap-4 text-xs text-slate-500 font-mono">
+                  <span>Try: example.com</span>
+                  <span>•</span>
+                  <span>Agent: 8Tester/1.0</span>
+                </div>
+              </motion.div>
+
+            </motion.div>
+          ) : (
             <motion.div
+              key="results"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 40 }}
             >
               <button
                 onClick={() => setReportData(null)}
-                className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+                className="mb-8 flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors text-sm font-medium border border-white/5"
               >
                 <ArrowRight className="w-4 h-4 rotate-180" />
-                Voltar para seleção
+                <span>Nova Análise</span>
               </button>
 
               <ResultsView data={reportData} />
@@ -247,10 +281,4 @@ export default function LandingPage() {
       </div>
     </div>
   );
-}
-
-function CheckCircleIcon() {
-  return (
-    <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
-  )
 }

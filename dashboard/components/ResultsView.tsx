@@ -23,25 +23,18 @@ export function ResultsView({ data }: { data: ReportData }) {
     const overallScore = Math.round((brokenLinksScore + a11yScore) / 2);
 
     return (
-        <div className="space-y-8">
-            {/* Header Stats */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden"
-            >
-                <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="px-3 py-1 rounded-full bg-white/20 border border-white/20 text-xs font-bold uppercase tracking-wide">
-                                Relatório Completo
-                            </div>
-                            <span className="text-white/60 text-sm">{new Date().toLocaleDateString()}</span>
+        <div className="space-y-8 animate-in fade-in duration-500">
+            {/* Header Section */}
+            <div className="glass-panel p-8 rounded-3xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -mr-32 -mt-32" />
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="space-y-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 text-xs font-medium border border-indigo-500/20">
+                            {/* <Clock className="w-3 h-3" /> */}
+                            Relatório Completo
                         </div>
-                        <h2 className="text-4xl font-black tracking-tight mb-2">{new URL(data.url).hostname}</h2>
-                        <a href={data.url} target="_blank" className="text-white/80 hover:text-white underline decoration-white/30 hover:decoration-white transition-all">
+                        <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">{new URL(data.url).hostname}</h2>
+                        <a href={data.url} target="_blank" className="text-indigo-200 hover:text-white underline decoration-indigo-300/50 hover:decoration-white transition-all text-sm">
                             {data.url}
                         </a>
                     </div>
@@ -68,7 +61,7 @@ export function ResultsView({ data }: { data: ReportData }) {
                         </div>
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
             {/* Agent Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -127,6 +120,33 @@ export function ResultsView({ data }: { data: ReportData }) {
                         </div>
                     </div>
                 </ReportCard>
+
+                {/* Metrics Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="glass-card p-6 rounded-2xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <span className="text-slate-400 text-sm font-medium">Links Quebrados</span>
+                            <div className="p-2 bg-red-500/10 rounded-lg">
+                                <AlertCircle className="w-5 h-5 text-red-400" />
+                            </div>
+                        </div>
+                        <div className="text-3xl font-bold text-white mb-1">
+                            {data.brokenLinks.length || 0}
+                        </div>
+                    </div>
+
+                    <div className="glass-card p-6 rounded-2xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <span className="text-slate-400 text-sm font-medium">HTTPS</span>
+                            <div className="p-2 bg-green-500/10 rounded-lg">
+                                <Shield className="w-5 h-5 text-green-400" />
+                            </div>
+                        </div>
+                        <div className="text-3xl font-bold text-white mb-1">
+                            {data.url.startsWith('https') ? 'Ativo' : 'Inativo'}
+                        </div>
+                    </div>
+                </div>
 
                 {/* Rosangela: Security */}
                 <ReportCard
