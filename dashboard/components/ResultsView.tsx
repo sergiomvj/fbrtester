@@ -18,8 +18,9 @@ type ReportData = {
 
 export function ResultsView({ data }: { data: ReportData }) {
     // Determine overall health (dummy algorithm)
-    const brokenLinksScore = Math.max(0, 100 - (data.brokenLinks.length * 10));
-    const a11yScore = Math.max(0, 100 - (data.accessibility.length * 5));
+    // Determine overall health (dummy algorithm)
+    const brokenLinksScore = Math.max(0, 100 - ((data.brokenLinks?.length || 0) * 10));
+    const a11yScore = Math.max(0, 100 - ((data.accessibility?.length || 0) * 5));
     const overallScore = Math.round((brokenLinksScore + a11yScore) / 2);
 
     return (
@@ -33,7 +34,7 @@ export function ResultsView({ data }: { data: ReportData }) {
                             {/* <Clock className="w-3 h-3" /> */}
                             Relatório Completo
                         </div>
-                        <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">{new URL(data.url).hostname}</h2>
+                        <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">{data.url ? new URL(data.url).hostname : 'Relatório'}</h2>
                         <a href={data.url} target="_blank" className="text-indigo-200 hover:text-white underline decoration-indigo-300/50 hover:decoration-white transition-all text-sm">
                             {data.url}
                         </a>
@@ -71,18 +72,18 @@ export function ResultsView({ data }: { data: ReportData }) {
                     icon={<Search className="w-6 h-6 text-white" />}
                     color="from-pink-500 to-rose-500"
                     score={brokenLinksScore}
-                    status={data.brokenLinks.length === 0 ? 'success' : 'error'}
+                    status={data.brokenLinks?.length === 0 ? 'success' : 'error'}
                     metrics={[
-                        { label: 'Total Links', value: data.links.length },
-                        { label: 'Links Externos', value: data.externalLinks.length },
-                        { label: 'Links Quebrados', value: data.brokenLinks.length, status: data.brokenLinks.length > 0 ? 'error' : 'success' },
+                        { label: 'Total Links', value: data.links?.length || 0 },
+                        { label: 'Links Externos', value: data.externalLinks?.length || 0 },
+                        { label: 'Links Quebrados', value: data.brokenLinks?.length || 0, status: (data.brokenLinks?.length || 0) > 0 ? 'error' : 'success' },
                     ]}
                 >
-                    {data.brokenLinks.length > 0 && (
+                    {(data.brokenLinks?.length || 0) > 0 && (
                         <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-300">
                             <p className="font-bold flex items-center gap-2 mb-1"><AlertCircle className="w-4 h-4" /> Links com Erro:</p>
                             <ul className="list-disc list-inside opacity-80">
-                                {data.brokenLinks.slice(0, 3).map((l: any, i: number) => (
+                                {data.brokenLinks?.slice(0, 3).map((l: any, i: number) => (
                                     <li key={i} className="truncate">{l}</li>
                                 ))}
                             </ul>
@@ -96,22 +97,22 @@ export function ResultsView({ data }: { data: ReportData }) {
                     icon={<BookOpen className="w-6 h-6 text-white" />}
                     color="from-blue-600 to-indigo-600"
                     score={a11yScore}
-                    status={data.accessibility.length === 0 ? 'success' : data.accessibility.length < 5 ? 'warning' : 'error'}
+                    status={(data.accessibility?.length || 0) === 0 ? 'success' : (data.accessibility?.length || 0) < 5 ? 'warning' : 'error'}
                     metrics={[
-                        { label: 'Interações', value: data.interactables.length },
-                        { label: 'Acessibilidade', value: `${data.accessibility.length} Issues`, status: data.accessibility.length > 0 ? 'warning' : 'success' }
+                        { label: 'Interações', value: data.interactables?.length || 0 },
+                        { label: 'Acessibilidade', value: `${data.accessibility?.length || 0} Issues`, status: (data.accessibility?.length || 0) > 0 ? 'warning' : 'success' }
                     ]}
                 >
                     <div className="mt-4">
                         <p className="text-xs font-bold text-slate-500 uppercase mb-2">Top Issues</p>
                         <div className="space-y-2">
-                            {data.accessibility.slice(0, 3).map((issue: any, i: number) => (
+                            {data.accessibility?.slice(0, 3).map((issue: any, i: number) => (
                                 <div key={i} className="flex items-start gap-2 text-sm text-slate-400">
                                     <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                                     <span>{issue.description}</span>
                                 </div>
                             ))}
-                            {data.accessibility.length === 0 && (
+                            {(data.accessibility?.length || 0) === 0 && (
                                 <div className="flex items-center gap-2 text-sm text-emerald-400">
                                     <CheckCircle className="w-4 h-4" />
                                     <span>Nenhum problema detectado!</span>
@@ -131,7 +132,7 @@ export function ResultsView({ data }: { data: ReportData }) {
                             </div>
                         </div>
                         <div className="text-3xl font-bold text-white mb-1">
-                            {data.brokenLinks.length || 0}
+                            {data.brokenLinks?.length || 0}
                         </div>
                     </div>
 
@@ -143,7 +144,7 @@ export function ResultsView({ data }: { data: ReportData }) {
                             </div>
                         </div>
                         <div className="text-3xl font-bold text-white mb-1">
-                            {data.url.startsWith('https') ? 'Ativo' : 'Inativo'}
+                            {data.url?.startsWith('https') ? 'Ativo' : 'Inativo'}
                         </div>
                     </div>
                 </div>
@@ -155,8 +156,8 @@ export function ResultsView({ data }: { data: ReportData }) {
                     color="from-red-600 to-orange-600"
                     status="success" // Mocked for now
                     metrics={[
-                        { label: 'Protocolo', value: data.url.startsWith('https') ? 'HTTPS' : 'HTTP', status: data.url.startsWith('https') ? 'success' : 'warning' },
-                        { label: 'Assets', value: data.assets.length }
+                        { label: 'Protocolo', value: data.url?.startsWith('https') ? 'HTTPS' : 'HTTP', status: data.url?.startsWith('https') ? 'success' : 'warning' },
+                        { label: 'Assets', value: data.assets?.length || 0 }
                     ]}
                 >
                     <div className="mt-4 flex flex-wrap gap-2">

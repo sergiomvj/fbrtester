@@ -100,7 +100,8 @@ export default function LandingPage() {
 
       const res = await fetch('/api/report');
       if (res.ok) {
-        const data = await res.json();
+        const result = await res.json();
+        const data = Array.isArray(result) ? result[0] : result;
         setReportData({ ...data, url: url.startsWith('http') ? url : `https://${url}` });
       }
     } catch (e) {
