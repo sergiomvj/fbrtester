@@ -6,17 +6,26 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { url, agent } = body;
 
-        // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // verification logic would go here
-        // For now, return success to demonstrate UI
+        // Call the Agent Service (running in a separate container)
+        // In Docker (Easypanel/Compose), the service name is usually the hostname
+        const agentServiceUrl = process.env.AGENT_SERVICE_URL || 'http://agent:4000';
 
-        return NextResponse.json({
-            success: true,
-            message: `A agente ${agent} iniciou a varredura em ${url}. Atualize o relatório em breve!`,
-            reportLink: '/report.json'
+        console.log(`Forwarding scan request to ${agentServiceUrl}/scan`);
+
+        const response = await fetch(`${agentServiceUrl}/scan`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url, agent }),
         });
+
+        if (!response.ok) {
+            throw new Error(`Agent service responded with ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return NextResponse.json(data);
 
     } catch (error) {
         return NextResponse.json(

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "start:server": "tsx src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,9 +16,11 @@
   "dependencies": {
     "@axe-core/playwright": "^4.11.1",
     "@modelcontextprotocol/sdk": "^1.26.0",
+    "@types/express": "^5.0.6",
     "axios": "^1.13.5",
     "cheerio": "^1.2.0",
     "dotenv": "^17.2.4",
+    "express": "^5.2.1",
     "openai": "^6.21.0",
     "playwright": "^1.58.2",
     "ts-node": "^10.9.2",

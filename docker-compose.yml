@@ -7,28 +7,36 @@ services:
       dockerfile: Dockerfile.agent
     container_name: 8tester-agent
     volumes:
-      - ./dashboard/public:/app/dashboard/public # Share report with dashboard
+      - 8tester-data:/app/data # Mount shared volume
       - ./.env:/app/.env
     environment:
+      - REPORT_PATH=/app/data/report.json
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
+    command: [ "npm", "run", "start:server" ]
     networks:
       - 8tester-network
 
   dashboard:
     build:
-      context: ./dashboard
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile.dashboard
     container_name: 8tester-dashboard
     ports:
       - "3000:3000"
     volumes:
-      - ./dashboard/public:/app/public # Read shared report
+      - 8tester-data:/app/data # Read shared report
     environment:
       - NODE_ENV=production
+      - AGENT_SERVICE_URL=http://agent:4000
+      - REPORT_PATH=/app/data/report.json
     networks:
       - 8tester-network
+
+volumes:
+  8tester-data:
+
 
 networks:
   8tester-network:

@@ -82,7 +82,11 @@ export default function LandingPage() {
       });
 
       // Fast-forward to result (mock)
-      const res = await fetch('/report.json');
+      // Wait a bit for the agent to potentially start/write (in real scenario, we might poll)
+      // For now, we assume immediate availability for the demo flow or just try fetching
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const res = await fetch('/api/report');
       if (res.ok) {
         const data = await res.json();
         // Inject mock url if needed

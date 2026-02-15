@@ -5,14 +5,14 @@ FROM node:20-slim
 # Install dependencies for Playwright (Chromium)
 # We need these for the Auditor/Lurdinha to work in headless mode
 RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-      --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+  wget \
+  gnupg \
+  && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+  && apt-get update \
+  && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+  --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
 # Work directory
 WORKDIR /app
@@ -32,5 +32,7 @@ COPY . .
 # Build TypeScript
 RUN npm run build
 
-# Default command (keeps container alive for agent commands)
-CMD ["tail", "-f", "/dev/null"]
+
+# Default command (runs the API server)
+EXPOSE 4000
+CMD ["npx", "tsx", "src/server.ts"]
