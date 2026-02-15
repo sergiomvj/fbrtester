@@ -3,14 +3,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Play, History, Users, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { Home, Play, History, Users, Settings, LogOut, LayoutDashboard, LifeBuoy } from 'lucide-react';
 import clsx from 'clsx';
 
 const navItems = [
-    { name: 'Visão Geral', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Nova Análise', href: '/', icon: Play },
-    { name: 'Relatórios', href: '/reports', icon: History },
+    { name: 'Visão Geral', href: '/', icon: LayoutDashboard },
     { name: 'Meus Agentes', href: '/agents', icon: Users },
+    { name: 'Relatórios', href: '/reports', icon: History },
     { name: 'Configurações', href: '/settings', icon: Settings },
 ];
 
@@ -55,7 +54,15 @@ export function Sidebar() {
             </nav>
 
             {/* Footer */}
-            <div className="p-4 border-t border-white/5">
+            <div className="p-4 border-t border-white/5 space-y-2">
+                <button
+                    onClick={() => window.open('mailto:suporte@8tester.com?subject=Reportar%20Erro%20-%208Tester', '_blank')}
+                    className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-colors group"
+                >
+                    <LifeBuoy className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">Reportar erro</span>
+                </button>
+
                 <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors">
                     <LogOut className="w-5 h-5" />
                     <span className="font-medium">Sair</span>

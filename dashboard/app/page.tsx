@@ -258,6 +258,45 @@ export default function LandingPage() {
                 </div>
               </motion.div>
 
+              {/* System Overview Section */}
+              <motion.div variants={itemVariants} className="pt-20 border-t border-white/5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                  <div className="space-y-6">
+                    <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-purple-300">
+                      Qualidade Evolutiva com IA
+                    </h2>
+                    <p className="text-slate-400 leading-relaxed">
+                      O <strong>8Tester</strong> não é apenas uma ferramenta de teste. É um sistema autônomo de garantia de qualidade e evolução de código.
+                      Utilizando uma "Salsa Secreta" de skills codificadas, nossa equipe de agentes virtuais varre, analisa e até propõe correções para o seu projeto.
+                    </p>
+                    <ul className="space-y-3">
+                      {['Validação de Links e Assets', 'Análise de Segurança', 'Verificação de Compatibilidade de Specs (RAG)', 'Linting e Boas Práticas'].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-sm text-slate-300">
+                          <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-purple-500/10 rounded-3xl blur-2xl" />
+                    <div className="glass-panel p-8 rounded-3xl border border-white/10 relative">
+                      <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white">1</div>
+                        <div className="h-0.5 flex-1 bg-slate-800" />
+                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white">2</div>
+                        <div className="h-0.5 flex-1 bg-slate-800" />
+                        <div className="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">3</div>
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-2">Fluxo Contínuo</h3>
+                      <p className="text-sm text-slate-400">
+                        Do <strong>Auditor</strong> que identifica falhas ao <strong>Agente de Evolução</strong> que propõe melhorias, o ciclo se fecha com inteligência.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
             </motion.div>
           ) : (
             <motion.div
